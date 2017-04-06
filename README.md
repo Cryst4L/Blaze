@@ -6,7 +6,7 @@ Exploring General Matrix Multplication (GEMM) on GPU. The project consists of a 
   <img src="https://github.com/Cryst4L/Blazing-GEMM/blob/master/results.png"/>
 </p>
 
-## How to use?
+## How to run the benchmark?
 
 You have two options: a command line tool, and a Python script.
 
