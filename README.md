@@ -1,4 +1,4 @@
-# Blazing GEMM: High performance Matrix Multiplication in OpenCL
+# Blazing GEMM: High Performance Matrix Multiplication
 
 Exploring General Matrix Multplication (GEMM) on GPU. The project consists of a C++ benchmark, which process several standard and custom techniques, implemented in OpenCL 1.2.
 
@@ -6,7 +6,7 @@ Exploring General Matrix Multplication (GEMM) on GPU. The project consists of a 
   <img src="https://github.com/Cryst4L/Blazing-GEMM/blob/master/results.png"/>
 </p>
 
-## How to use?
+## How to run the benchmark?
 
 You have two options: a command line tool, and a Python script.
 
@@ -24,7 +24,7 @@ Then you can run the tool. Notice that it comes with several options:
 
 * **-s** : specify the size of matrices processed (default is 512)
 * **-i** : specify the number of iterations of the product, which is used to refine the measurements (default is 20)
-* **-r** : run the tool in **reduced mode**, i.e. with minimal verbose and no error checking. That's the mode used by the python script
+* **-r** : run the tool in **reduced mode**, i.e. with less verbose and no error checking. That's the mode used by the python script
 
 A typical usage would be:
 
