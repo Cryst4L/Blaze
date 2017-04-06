@@ -1,4 +1,4 @@
-# Blazing GEMM: High performance Matrix Multiplication in OpenCL
+# Blazing GEMM: High Performance Matrix Multiplication
 
 Exploring General Matrix Multplication (GEMM) on GPU. The project consists of a C++ benchmark, which process several standard and custom techniques, implemented in OpenCL 1.2.
 
