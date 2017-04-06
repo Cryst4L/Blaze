@@ -24,7 +24,7 @@ Then you can run the tool. Notice that it comes with several options:
 
 * **-s** : specify the size of matrices processed (default is 512)
 * **-i** : specify the number of iterations of the product, which is used to refine the measurements (default is 20)
-* **-r** : run the tool in **reduced mode**, i.e. with minimal verbose and no error checking. That's the mode used by the python script
+* **-r** : run the tool in **reduced mode**, i.e. with less verbose and no error checking. That's the mode used by the python script
 
 A typical usage would be:
 
