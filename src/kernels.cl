@@ -15,7 +15,7 @@
 //
 // When using the shared memory this should induce an unefficient execution
 // of the WARPs loading the coefficients of A and the WARPs writing back the
-// coefficient of C:
+// coefficient of C:techniques
 //
 // In these WARPs each concurrent Scalar Processors would be attempting to use
 // the same memory BANK thus resulting in sequential memory accesses !
@@ -132,7 +132,7 @@ __kernel void GEMM_CRB(
     const int sub_tile_row = get_local_id(IDX0);
     const int sub_tile_col = get_local_id(IDX1);
 
-	__local float tile_A[CRB_TS][CRB_TS];
+    __local float tile_A[CRB_TS][CRB_TS];
     __local float tile_B[CRB_TS][CRB_TS];
 
     float sub_tile_A[CRB_STS][CRB_STS];
@@ -231,7 +231,7 @@ __kernel void GEMM_CRB_T(
     const int sub_tile_row = get_local_id(IDX0);
     const int sub_tile_col = get_local_id(IDX1);
 
-	__local float tile_A[CRB_TS][CRB_TS];
+    __local float tile_A[CRB_TS][CRB_TS];
     __local float tile_B[CRB_TS][CRB_TS];
 
     float sub_tile_A[CRB_STS][CRB_STS];
@@ -323,7 +323,7 @@ __kernel void GEMM_CRB_TR(
     const int sub_tile_row = get_local_id(IDX0);
     const int sub_tile_col = get_local_id(IDX1);
 
-	__local float tile_A[CRB_TS][CRB_TS];
+    __local float tile_A[CRB_TS][CRB_TS];
     __local float tile_B[CRB_TS][CRB_TS];
 
     float sub_tile_col_A[CRB_STS];
