@@ -8,9 +8,9 @@ Exploring General Matrix Multplication (GEMM) on GPU. The project consists of a 
 
 ## How to run the benchmark?
 
-You actually have two options ...
+You have two options:
 
-* **using the command line tool :**
+#### Using the command line tool
 
 First, you want to build the project with CMake:
 
@@ -32,7 +32,7 @@ A typical usage would be:
 ./GEMM -s 1024 -i 10
 ```
 
-* **using the Python script :**
+#### Using the Python script
 
 Alternatively, you can use the _run.py_ script, which builds the project for you, run the benchmark on several configurations and plot the results.
 Plotting is done with **matplotlib**, so you want to make sure it is installed on your machine before running the script.
