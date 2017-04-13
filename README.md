@@ -50,6 +50,6 @@ The whole project is organized around few core sources:
 
 * **benchmark.h** : contains the benchamrk class, written in 'header-only' style.
 
-## License
+## Copyright
 
 This project is released under MIT license.
