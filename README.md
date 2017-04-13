@@ -44,10 +44,12 @@ python run.py
 
 The whole project is organized around few core sources:
 
-* "**kernels.cl**" contains all the OpenCL benchmarked kernels, along with some documentation.
+* **kernels.cl** : contains all the OpenCL benchmarked kernels, along with some documentation.
 
-* "**main.cpp**" implements the benchmarking pipeline. This source is crystal clear, so it might be worth checking.
+* **main.cpp** : implements the benchmarking pipeline. This source is crystal clear, so it might be worth checking.
 
-* "**benchmark.h**" contains the benchamrk class, written in 'header-only' style.
+* **benchmark.h** : contains the benchamrk class, written in 'header-only' style.
+
+## License
 
 This project is released under MIT license.
