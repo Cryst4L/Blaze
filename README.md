@@ -33,7 +33,7 @@ A typical usage would be:
 
 #### B. Using the Python script
 
-Alternatively, you can use the _'run.py'_ script, which builds the project for you, run the benchmark on several configurations and plot the results.
+Alternatively, you can use the _run.py_ script, which builds the project for you, run the benchmark on several configurations and plot the results.
 Plotting is done with **matplotlib**, so you want to make sure it is installed on your machine before running the script:
 
 ```sh
@@ -48,7 +48,7 @@ The whole project is organized around few core sources:
 
 * **main.cpp** : implements the benchmarking pipeline. This source is crystal clear, so it might be worth checking.
 
-* **benchmark.h** : contains the benchamrk class, written in 'header-only' style.
+* **benchmark.h** : contains the benchmark class, written in 'header-only' style.
 
 ## Copyright
 
