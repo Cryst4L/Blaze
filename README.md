@@ -23,7 +23,7 @@ Then you can run the tool. Notice that it comes with several options:
 
 * **-s** : specify the size of matrices processed (default is 512).
 * **-i** : specify the number of iterations, which is used to refine the measurements (default is 20).
-* **-r** : run the tool in **reduced mode**, i.e. with minimal verbose and no error checking.
+* **-r** : run the tool in _reduced mode_, i.e. with minimal verbose and no error checking.
 
 A typical usage would be:
 
