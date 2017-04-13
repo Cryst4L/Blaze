@@ -9,7 +9,7 @@ modes = ['Naive', 'SMB', 'CRB', 'CRB-T', 'CRB-TR']
 #-Script Body ------------------------------------------------------------------
 if __name__ == "__main__":
 
-	#-Build the OpenCL project--------------------------------------------------
+    #-Build the OpenCL project--------------------------------------------------
     if not 'build' in os.listdir('.'):
         os.system('mkdir build')
     os.chdir('build')
