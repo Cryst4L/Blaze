@@ -9,7 +9,7 @@ The project consists of a C++ benchmark, which process several standard and cust
 
 How to run the benchmark?
 -------------------------
-#### A. Using the command line tool
+<b>A. Using the command line tool</b>
 
 First, you want to build the project with CMake:
 
@@ -27,7 +27,7 @@ Then you can run the tool. Notice that it comes with several options:
 
 A typical usage would be: ```sh ./GEMM -s 1024 -i 10 ```
 
-#### B. Using the Python script
+<b>B. Using the Python script</b>
 
 Alternatively, you can use the _run.py_ script, which builds the project for you, run the benchmark on several configurations and plot the results.
 The plot is rendered with **matplotlib**, so you want to make sure it is installed on your machine before running the script: ```sh python run.py```
