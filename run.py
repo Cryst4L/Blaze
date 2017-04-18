@@ -3,7 +3,7 @@ import sys, os, math
 import matplotlib.pyplot as plt
 
 #-Configuration ----------------------------------------------------------------
-sizes = [ 2**n for n in range(7, 14) ]
+sizes = [ 2**n for n in range(6, 13) ]
 modes = ['Naive', 'SMB', 'CRB', 'CRB-T', 'CRB-TR']
 
 #-Script Body ------------------------------------------------------------------
@@ -50,30 +50,32 @@ if __name__ == "__main__":
     fig,axes = plt.subplots()
 
     # size and name
-    fig.set_size_inches(9, 5, forward=True)
+    fig.set_size_inches(8, 4, forward=True)
+    fig.subplots_adjust(bottom=0.15)
     fig.canvas.set_window_title('GEMM - benchmark')
+
 
     # axes
     axes.set_xlim([0, len(sizes)-1])
-    axes.set_ylim([0, 1.2 * max([max(l) for l in results])])
+    axes.set_ylim([0, 1.1 * max([max(l) for l in results])])
 
     axes.xaxis.set_ticks(range(0, len(sizes)))
     axes.xaxis.set_ticklabels(sizes)
 
     # plotting
     def plot_entry(n):
-        colors = ['r', 'g', 'b', 'm', 'k']
         markers = ['o', '^', 's', 'D', 'v']
+        colors = ['purple', 'royalblue', 'r', 'orange', 'k']
         return plt.plot(results[n], color=colors[n],
                         linestyle='-', marker=markers[n],
                         markeredgewidth=1, markeredgecolor=colors[n],
-                        markerfacecolor='none', markersize=8)[0]
+                        markerfacecolor=colors[n], markersize=6)[0]
 
     print '# Plotting the results ...'
     plots = [ plot_entry(n) for n in range(0, len(modes)) ]
 
     # legend
-    plt.legend(plots, modes, loc='upper left')
+    plt.legend(plots, modes, loc='upper left', fontsize = '14')
 
     # background grid
     plt.grid(True, which="major", linestyle=':')
@@ -81,9 +83,9 @@ if __name__ == "__main__":
     plt.minorticks_on()
 
     # labels
-    plt.xlabel('Matrix Size (M=N=K)', fontsize=13)
-    plt.ylabel('Effective Performance (TFLOPS)', fontsize=13)
-    plt.title('Performance Comparison of the Proposed Kernels', size=14)
+    plt.xlabel('matrix size (M=N=K)', fontsize=14)
+    plt.ylabel('effective performance (TFLOPS)', fontsize=14)
+    plt.title('Performance Comparison of the Proposed Kernels', size=16)
 
     # and that's it!
     plt.show()
