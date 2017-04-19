@@ -15,7 +15,7 @@
 // Each work-group is in-charge of computing a tile of the dimension TSxTS
 // in the output matrix.
 //
-// Note that (TS/STS) must be smaller than the SQRT of MAX(WorkGroupSize),
+// Note that TS must be smaller than the SQRT of MAX(WorkGroupSize),
 // which equals to 1024 on the development device (a NVIDIA GTX 1060).
 ////////////////////////////////////////////////////////////////////////////////
 #define SMB_TS   32
@@ -25,7 +25,7 @@
 // optimize the memory schedules.
 //
 // The size of the square sub-tiles employed in these products is specified
-// by the following define.
+// by the STS define.
 ////////////////////////////////////////////////////////////////////////////////
 #define CRB_TS   32
 #define CRB_STS   4
