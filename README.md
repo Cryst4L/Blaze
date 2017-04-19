@@ -25,12 +25,12 @@ Then you can run the tool. Notice that it comes with several options:
 * **-i** : specify the number of iterations, which is used to refine the measurements (default is 20).
 * **-r** : run the tool in _reduced mode_, i.e. with minimal verbose and no error checking.
 
-A typical usage would be: ```sh ./GEMM -s 1024 -i 10 ```
+A typical usage would be: ```./GEMM -s 1024 -i 10```
 
 <b>B. Using the Python script</b>
 
 Alternatively, you can use the _run.py_ script, which builds the project for you, run the benchmark on several configurations and plot the results.
-The plot is rendered with **matplotlib**, so you want to make sure it is installed on your machine before running the script: ```sh python run.py```
+The plot is rendered with **matplotlib**, so you want to make sure it is installed on your machine before running the script: ```python run.py```
 
 Principal Files
 --------------
