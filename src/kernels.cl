@@ -163,15 +163,15 @@ __kernel void GEMM_CRB(
 
 		for (int n = 0; n < (CRB_TS / CRB_STS); n++) {
 
-		for (int i = 0; i < CRB_STS; i++) // HERE: reverse ?
-			for (int j = 0; j < CRB_STS; j++)
-				sub_tile_A[i][j] =
-					tile_A[CRB_STS * sub_tile_row + i][CRB_STS * n + j];
+			for (int i = 0; i < CRB_STS; i++) // HERE: reverse ?
+				for (int j = 0; j < CRB_STS; j++)
+					sub_tile_A[i][j] =
+						tile_A[CRB_STS * sub_tile_row + i][CRB_STS * n + j];
 
-		for (int i = 0; i < CRB_STS; i++)
-			for (int j = 0; j < CRB_STS; j++) // HERE: reverse ?
-				sub_tile_B[i][j] =
-					tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
+			for (int i = 0; i < CRB_STS; i++)
+				for (int j = 0; j < CRB_STS; j++) // HERE: reverse ?
+					sub_tile_B[i][j] =
+						tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
 
 			barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -292,7 +292,7 @@ __kernel void GEMM_CRB_T(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// 4. CRBT REDUCED:
+// 5. CRBT REDUCED:
 // -----------------------------------------------------------------------------
 // Scalar Processors hold a very limited amount of registers, typically between
 // 63 and 255. Nevertheless, to compute the sub-tile products, the last kernel
