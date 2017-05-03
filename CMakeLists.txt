@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Set Up an OpenCL environment and build the Project
 # ------------------------------------------------------------------------------
-project(GEMM)
+project(BLAZE)
 cmake_minimum_required(VERSION 3.1)
 
 # -- OPTIONS -------------------------------------------------------------------
@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-O2")
 
 # -- FIND ----------------------------------------------------------------------
-#set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake") #needs some editing !
+# set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake") (needs some editing !)
 find_package(OpenCL REQUIRED)
 
 # -- INCLUDE -------------------------------------------------------------------
@@ -18,11 +18,14 @@ include_directories(
 )
 
 # -- TARGET --------------------------------------------------------------------
-add_executable(GEMM
+add_executable(BLAZE
+	src/parser.cpp
+	src/benchmark.cpp
+	src/matrix.cpp
 	src/main.cpp
 )
 
 # -- LINK ----------------------------------------------------------------------
-target_link_libraries(GEMM
+target_link_libraries(BLAZE
 	${OpenCL_LIBRARY}
 )

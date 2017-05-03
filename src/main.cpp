@@ -1,9 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// High Performance Matrix Multiplication in OPENCL - B.Halimi - 2017
+// High Performance Matrix Multiplication in OPENCL - B.Halimi, 2017
 ////////////////////////////////////////////////////////////////////////////////
-#include "benchmark.h"
-#include "constants.h"
-#include "parser.h"
+
+#include "../inc/benchmark.h"
+#include "../inc/constants.h"
+#include "../inc/parser.h"
 
 // Default benchmark configs
 #define MATRIX_SIZE    512
@@ -24,7 +25,7 @@ int main(int argc, char* argv[])
 	// Initialize our OCL benchmarking tool
 	Benchmark bench;
 	if (!reduced) bench.printDeviceInfo();
-	bench.loadProgram("../src/constants.h");
+	bench.loadProgram("../inc/constants.h");
 	bench.loadProgram("../src/kernels.cl");
 
 	// Create the host Matrices
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 	} Entry;
 
 	// Declare the different kernel entries
-	std::vector<Entry> entries = {
+	std::vector <Entry> entries = {
 		// Naive: each thread compute a row-col dot-product
 		{        "GEMM",           matrix_size,               WGS},
 		// SMB: processing by block using the shared memory
@@ -93,7 +94,7 @@ int main(int argc, char* argv[])
 	// PRINT RESULTS ///////////////////////////////////////////////////////////
 
 	if (!reduced) {
-		std::cout << " ----------------------------------------------\n";
+		std::cout << ' ' << std::string(50, '-') << '\n';
 		for (int n = 0; n < n_entries; n++) {
 			std::cout << std::setprecision(3) << " [" << entries[n].name;
 			std::cout << std::string(12 - entries[n].name.size(), ' ')  << "]";
@@ -101,7 +102,7 @@ int main(int argc, char* argv[])
 			std::cout << " miss : " << std::setw(3) << error_counts[n];
 			std::cout << "/" << n_iteration << "\n";
 		}
-		std::cout << " ----------------------------------------------\n";
+		std::cout << ' ' << std::string(50, '-') << '\n';	
 	} else {
 		for (int i = 0; i < n_entries; i++)
 			std::cout << time_records[i] << '\n';
