@@ -25,7 +25,7 @@ Then you can run the tool. Notice that it comes with several options:
 * **-i** : specify the number of iterations, which is used to refine the measurements (default is 20).
 * **-r** : run the tool in _reduced mode_, i.e. with minimal verbose and no error checking.
 
-A typical usage would be: ```./GEMM -s 1024 -i 10```
+A typical usage would be: ```./BLAZE -s 1024 -i 10```
 
 <b>B. Using the Python script</b>
 
@@ -40,7 +40,7 @@ The whole project is organized around few core sources:
 
 * **main.cpp** : implements the benchmarking pipeline. This source is crystal clear, so it might be worth checking.
 
-* **benchmark.h** : contains the benchmark class, written in 'header-only' style.
+* **benchmark.cpp** : implements the benchmarking object, which test a selected object.
 
 Copyright
 ----------
