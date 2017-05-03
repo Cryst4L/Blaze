@@ -40,7 +40,7 @@ The whole project is organized around few core sources:
 
 * **main.cpp** : implements the benchmarking pipeline. This source is crystal clear, so it might be worth checking.
 
-* **benchmark.h** : contains the benchmark class, written in 'header-only' style.
+* **benchmark.cpp** : implements the benchmarking object, which test a selected object.
 
 Copyright
 ----------
