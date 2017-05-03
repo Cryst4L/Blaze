@@ -6,7 +6,7 @@
 // use in this project the row-major memory layout, according to the following
 // formula:
 //
-//     M(row, col) = *(M.data + row * M.cols + col)
+//    z M(row, col) = *(M.data + row * M.cols + col)
 //
 // As a result, elements of a same row will are coalescent.
 //
@@ -26,11 +26,11 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 #ifdef ROW_MAJOR_IDX
-    #define IDX0 1
-    #define IDX1 0
+	#define IDX0 1
+	#define IDX1 0
 #else
-    #define IDX0 0
-    #define IDX1 1
+	#define IDX0 0
+	#define IDX1 1
 #endif
 ////////////////////////////////////////////////////////////////////////////////
 // 1. NAIVE:
@@ -39,18 +39,18 @@
 // coefficients directly from the global memory.
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void GEMM(
-    const int A_width,
-    const int B_width,
-    const __global float* A_mem,
-    const __global float* B_mem,
-          __global float* C_mem)
+	const int A_width,
+	const int B_width,
+	const __global float* A_mem,
+	const __global float* B_mem,
+	      __global float* C_mem)
 {
-    const int row = get_global_id(IDX0);
-    const int col = get_global_id(IDX1);
+	const int row = get_global_id(IDX0);
+	const int col = get_global_id(IDX1);
 
-    float acc = 0.0f;
-    for (int e = 0; e < A_width; e++)
-        acc += A_mem[row * A_width + e] * B_mem[e * B_width + col];
+	float acc = 0.0f;
+	for (int e = 0; e < A_width; e++)
+		acc += A_mem[row * A_width + e] * B_mem[e * B_width + col];
 
 	C_mem[row * B_width + col] = acc;
 }
@@ -62,24 +62,24 @@ __kernel void GEMM(
 // the shared (__local) memory to reduce computing latencies.
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void GEMM_SMB(
-    const int A_width,
-    const int B_width,
-    const __global float* A_mem,
-    const __global float* B_mem,
-          __global float* C_mem)
+	const int A_width,
+	const int B_width,
+	const __global float* A_mem,
+	const __global float* B_mem,
+	      __global float* C_mem)
 {
-    const int row = get_local_id(IDX0);
-    const int col = get_local_id(IDX1);
+	const int row = get_local_id(IDX0);
+	const int col = get_local_id(IDX1);
 
-    const int tile_row = get_group_id(IDX0);
-    const int tile_col = get_group_id(IDX1);
+	const int tile_row = get_group_id(IDX0);
+	const int tile_col = get_group_id(IDX1);
 
 	__local float tile_A[SMB_TS][SMB_TS];
-    __local float tile_B[SMB_TS][SMB_TS];
+	__local float tile_B[SMB_TS][SMB_TS];
 
-    float acc = 0.0f;
+	float acc = 0.0f;
 
-    for (int m = 0; m < (A_width / SMB_TS); ++m) {
+	for (int m = 0; m < (A_width / SMB_TS); ++m) {
 
 		int tile_offset_A = (A_width * SMB_TS) * tile_row + (SMB_TS) * m;
 		int tile_offset_B = (B_width * SMB_TS) * m + (SMB_TS) * tile_col;
@@ -101,7 +101,7 @@ __kernel void GEMM_SMB(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// 2. CASCADED REGISTER BLOCKING (CRB) :
+// 3. CASCADED REGISTER BLOCKING (CRB) :
 // -----------------------------------------------------------------------------
 // To reduce the data throughput compared to the previous method, each thread
 // will compute a sub-block of the output matrix rather than a single coeff.
@@ -120,32 +120,32 @@ __kernel void GEMM_SMB(
 // this additional caching technique.
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void GEMM_CRB(
-    const int A_width,
-    const int B_width,
-    const __global float* A_mem,
-    const __global float* B_mem,
-          __global float* C_mem)
+	const int A_width,
+	const int B_width,
+	const __global float* A_mem,
+	const __global float* B_mem,
+	      __global float* C_mem)
 {
-    const int tile_row = get_group_id(IDX0);
-    const int tile_col = get_group_id(IDX1);
+	const int tile_row = get_group_id(IDX0);
+	const int tile_col = get_group_id(IDX1);
 
-    const int sub_tile_row = get_local_id(IDX0);
-    const int sub_tile_col = get_local_id(IDX1);
+	const int sub_tile_row = get_local_id(IDX0);
+	const int sub_tile_col = get_local_id(IDX1);
 
-    __local float tile_A[CRB_TS][CRB_TS];
-    __local float tile_B[CRB_TS][CRB_TS];
+	__local float tile_A[CRB_TS][CRB_TS];
+	__local float tile_B[CRB_TS][CRB_TS];
 
-    float sub_tile_A[CRB_STS][CRB_STS];
-    float sub_tile_B[CRB_STS][CRB_STS];
-    float sub_tile_C[CRB_STS][CRB_STS];
+	float sub_tile_A[CRB_STS][CRB_STS];
+	float sub_tile_B[CRB_STS][CRB_STS];
+	float sub_tile_C[CRB_STS][CRB_STS];
 
-    for (int i = 0; i < CRB_STS; i++)
-    	for (int j = 0; j < CRB_STS; j++)
+	for (int i = 0; i < CRB_STS; i++)
+		for (int j = 0; j < CRB_STS; j++)
 			sub_tile_C[i][j] = 0.0f;
 
 	barrier(CLK_LOCAL_MEM_FENCE);
 
-    for (int m = 0; m < (A_width / CRB_TS); ++m) {
+	for (int m = 0; m < (A_width / CRB_TS); ++m) {
 
 		int tile_offset_A = (A_width * CRB_TS) * tile_row + (CRB_TS) * m;
 		int tile_offset_B = (B_width * CRB_TS) * m + (CRB_TS) * tile_col;
@@ -155,7 +155,7 @@ __kernel void GEMM_CRB(
 				int row = CRB_STS * sub_tile_row + i;
 				int col = CRB_STS * sub_tile_col + j;
 				tile_A[row][col] = A_mem[tile_offset_A + (A_width * row) + col];
-                tile_B[row][col] = B_mem[tile_offset_B + (B_width * row) + col];
+				tile_B[row][col] = B_mem[tile_offset_B + (B_width * row) + col];
 			}
 		}
 
@@ -163,15 +163,15 @@ __kernel void GEMM_CRB(
 
 		for (int n = 0; n < (CRB_TS / CRB_STS); n++) {
 
-            for (int i = 0; i < CRB_STS; i++) // HERE: reverse ?
-                for (int j = 0; j < CRB_STS; j++)
-					sub_tile_A[i][j] =
-                        tile_A[CRB_STS * sub_tile_row + i][CRB_STS * n + j];
+		for (int i = 0; i < CRB_STS; i++) // HERE: reverse ?
+			for (int j = 0; j < CRB_STS; j++)
+				sub_tile_A[i][j] =
+					tile_A[CRB_STS * sub_tile_row + i][CRB_STS * n + j];
 
-            for (int i = 0; i < CRB_STS; i++)
-			    for (int j = 0; j < CRB_STS; j++) // HERE: reverse ?
-                    sub_tile_B[i][j] =
-                        tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
+		for (int i = 0; i < CRB_STS; i++)
+			for (int j = 0; j < CRB_STS; j++) // HERE: reverse ?
+				sub_tile_B[i][j] =
+					tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
 
 			barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -179,13 +179,13 @@ __kernel void GEMM_CRB(
 				for (int j = 0; j < CRB_STS; j++)
 					for (int e = 0; e < CRB_STS; e++)
 						sub_tile_C[i][j] +=
-                            sub_tile_A[i][e] * sub_tile_B[e][j];
-        }
+							sub_tile_A[i][e] * sub_tile_B[e][j];
+		}
 	}
 
 	int offset_C =
-        (B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
-        (B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
+		(B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
+		(B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
 
 	for (int i = 0; i < CRB_STS; i++)
 		for (int j = 0; j < CRB_STS; j++)
@@ -193,7 +193,7 @@ __kernel void GEMM_CRB(
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// 3. CRB TRANSPOSED:
+// 4. CRB TRANSPOSED:
 // -----------------------------------------------------------------------------
 // Despite the previous optimizations, most the processing time is still spent
 // in memory accesses. The pulling of the sub-tiles of A into the private
@@ -219,32 +219,32 @@ __kernel void GEMM_CRB(
 // the processing time.
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void GEMM_CRB_T(
-    const int A_width,
-    const int B_width,
-    const __global float* A_mem,
-    const __global float* B_mem,
-          __global float* C_mem)
+	const int A_width,
+	const int B_width,
+	const __global float* A_mem,
+	const __global float* B_mem,
+	      __global float* C_mem)
 {
-    const int tile_row = get_group_id(IDX0);
-    const int tile_col = get_group_id(IDX1);
+	const int tile_row = get_group_id(IDX0);
+	const int tile_col = get_group_id(IDX1);
 
-    const int sub_tile_row = get_local_id(IDX0);
-    const int sub_tile_col = get_local_id(IDX1);
+	const int sub_tile_row = get_local_id(IDX0);
+	const int sub_tile_col = get_local_id(IDX1);
 
-    __local float tile_A[CRB_TS][CRB_TS];
-    __local float tile_B[CRB_TS][CRB_TS];
+	__local float tile_A[CRB_TS][CRB_TS];
+	__local float tile_B[CRB_TS][CRB_TS];
 
-    float sub_tile_A[CRB_STS][CRB_STS];
-    float sub_tile_B[CRB_STS][CRB_STS];
-    float sub_tile_C[CRB_STS][CRB_STS];
+	float sub_tile_A[CRB_STS][CRB_STS];
+	float sub_tile_B[CRB_STS][CRB_STS];
+	float sub_tile_C[CRB_STS][CRB_STS];
 
-    for (int i = 0; i < CRB_STS; i++)
-    	for (int j = 0; j < CRB_STS; j++)
+	for (int i = 0; i < CRB_STS; i++)
+		for (int j = 0; j < CRB_STS; j++)
 			sub_tile_C[i][j] = 0.0f;
 
 	barrier(CLK_LOCAL_MEM_FENCE);
 
-    for (int m = 0; m < (A_width / CRB_TS); ++m) {
+	for (int m = 0; m < (A_width / CRB_TS); ++m) {
 
 		int tile_offset_A = (A_width * CRB_TS) * tile_row + (CRB_TS) * m;
 		int tile_offset_B = (B_width * CRB_TS) * m + (CRB_TS) * tile_col;
@@ -254,7 +254,7 @@ __kernel void GEMM_CRB_T(
 				int row = CRB_STS * sub_tile_row + i;
 				int col = CRB_STS * sub_tile_col + j;
 				tile_A[col][row] = A_mem[tile_offset_A + (A_width * row) + col];
-                tile_B[row][col] = B_mem[tile_offset_B + (B_width * row) + col];
+				tile_B[row][col] = B_mem[tile_offset_B + (B_width * row) + col];
 			}
 		}
 
@@ -262,15 +262,15 @@ __kernel void GEMM_CRB_T(
 
 		for (int n = 0; n < (CRB_TS / CRB_STS); n++) {
 
-            for (int i = 0; i < CRB_STS; i++)
-                for (int j = 0; j < CRB_STS; j++)
+			for (int i = 0; i < CRB_STS; i++)
+				for (int j = 0; j < CRB_STS; j++)
 					sub_tile_A[i][j] =
-                        tile_A[CRB_STS * n + j][CRB_STS * sub_tile_row + i];
+						tile_A[CRB_STS * n + j][CRB_STS * sub_tile_row + i];
 
-            for (int i = 0; i < CRB_STS; i++)
-			    for (int j = 0; j < CRB_STS; j++)
-                    sub_tile_B[i][j] =
-                        tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
+			for (int i = 0; i < CRB_STS; i++)
+				for (int j = 0; j < CRB_STS; j++)
+					sub_tile_B[i][j] =
+						tile_B[CRB_STS * n + i][CRB_STS * sub_tile_col + j];
 
 			barrier(CLK_LOCAL_MEM_FENCE);
 
@@ -278,13 +278,13 @@ __kernel void GEMM_CRB_T(
 				for (int j = 0; j < CRB_STS; j++)
 					for (int e = 0; e < CRB_STS; e++)
 						sub_tile_C[i][j] +=
-                            sub_tile_A[i][e] * sub_tile_B[e][j];
-        }
+							sub_tile_A[i][e] * sub_tile_B[e][j];
+		}
 	}
 
 	int offset_C =
-        (B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
-        (B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
+		(B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
+		(B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
 
 	for (int i = 0; i < CRB_STS; i++)
 		for (int j = 0; j < CRB_STS; j++)
@@ -311,32 +311,32 @@ __kernel void GEMM_CRB_T(
 // only 72 on the 255 regiters available (without this optimization).
 ////////////////////////////////////////////////////////////////////////////////
 __kernel void GEMM_CRB_TR(
-    const int A_width,
-    const int B_width,
-    const __global float* A_mem,
-    const __global float* B_mem,
-          __global float* C_mem)
+	const int A_width,
+	const int B_width,
+	const __global float* A_mem,
+	const __global float* B_mem,
+	      __global float* C_mem)
 {
-    const int tile_row = get_group_id(IDX0);
-    const int tile_col = get_group_id(IDX1);
+	const int tile_row = get_group_id(IDX0);
+	const int tile_col = get_group_id(IDX1);
 
-    const int sub_tile_row = get_local_id(IDX0);
-    const int sub_tile_col = get_local_id(IDX1);
+	const int sub_tile_row = get_local_id(IDX0);
+	const int sub_tile_col = get_local_id(IDX1);
 
-    __local float tile_A[CRB_TS][CRB_TS];
-    __local float tile_B[CRB_TS][CRB_TS];
+	__local float tile_A[CRB_TS][CRB_TS];
+	__local float tile_B[CRB_TS][CRB_TS];
 
-    float sub_tile_col_A[CRB_STS];
-    float sub_tile_row_B[CRB_STS];
-    float sub_tile_C[CRB_STS][CRB_STS];
+	float sub_tile_col_A[CRB_STS];
+	float sub_tile_row_B[CRB_STS];
+	float sub_tile_C[CRB_STS][CRB_STS];
 
-    for (int i = 0; i < CRB_STS; i++)
-    	for (int j = 0; j < CRB_STS; j++)
+	for (int i = 0; i < CRB_STS; i++)
+		for (int j = 0; j < CRB_STS; j++)
 			sub_tile_C[i][j] = 0.0f;
 
 	barrier(CLK_LOCAL_MEM_FENCE);
 
-    for (int m = 0; m < (A_width / CRB_TS); ++m) {
+	for (int m = 0; m < (A_width / CRB_TS); ++m) {
 
 		int tile_offset_A = (A_width * CRB_TS) * tile_row + (CRB_TS) * m;
 		int tile_offset_B = (B_width * CRB_TS) * m + (CRB_TS) * tile_col;
@@ -354,30 +354,29 @@ __kernel void GEMM_CRB_TR(
 
 		for (int n = 0; n < (CRB_TS / CRB_STS); n++) {
 
-            for (int p = 0; p < CRB_STS; p++) {
+			for (int p = 0; p < CRB_STS; p++) {
 
-                for(int e = 0; e < CRB_STS; e++)
-                    sub_tile_col_A[e] =
-                        tile_A[CRB_STS * n + p][CRB_STS * sub_tile_row + e];
+				for(int e = 0; e < CRB_STS; e++)
+					sub_tile_col_A[e] =
+						tile_A[CRB_STS * n + p][CRB_STS * sub_tile_row + e];
 
-                for(int e = 0; e < CRB_STS; e++)
-                    sub_tile_row_B[e] =
-                        tile_B[CRB_STS * n + p][CRB_STS * sub_tile_col + e];
+				for(int e = 0; e < CRB_STS; e++)
+					sub_tile_row_B[e] =
+						tile_B[CRB_STS * n + p][CRB_STS * sub_tile_col + e];
 
-                for (int i = 0; i < CRB_STS; i++) {
-    			    for (int j = 0; j < CRB_STS; j++)
-    				    sub_tile_C[i][j] +=
-                            sub_tile_col_A[i] * sub_tile_row_B[j];
-                }
+				for (int i = 0; i < CRB_STS; i++)
+					for (int j = 0; j < CRB_STS; j++)
+						sub_tile_C[i][j] +=
+							sub_tile_col_A[i] * sub_tile_row_B[j];
 
-            	barrier(CLK_LOCAL_MEM_FENCE);
-            }
+				barrier(CLK_LOCAL_MEM_FENCE);
+			}
 		}
 	}
 
 	int offset_C =
-        (B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
-        (B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
+		(B_width * CRB_TS) * tile_row + (CRB_TS) * tile_col +
+		(B_width * CRB_STS) * sub_tile_row + (CRB_STS) * sub_tile_col;
 
 	for (int i = 0; i < CRB_STS; i++)
 		for (int j = 0; j < CRB_STS; j++)
